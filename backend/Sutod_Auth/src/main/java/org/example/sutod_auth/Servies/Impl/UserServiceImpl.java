@@ -7,6 +7,7 @@ import org.example.sutod_auth.Servies.UserServiceIntr;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -18,4 +19,11 @@ public class UserServiceImpl implements UserServiceIntr {
     public List<User> findAll() {
         return userRepository.findAll();
     }
+
+    @Override
+    public Optional<User> findByName(String name) {
+        return userRepository.findByUsername(name);
+    }
+
+
 }

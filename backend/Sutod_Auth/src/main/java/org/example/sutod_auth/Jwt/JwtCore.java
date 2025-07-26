@@ -11,17 +11,35 @@ import java.util.Date;
 
 @Component
 public class JwtCore {
-    private String secret = "dsjfkdsdqw234jsfkwdf324scs";
+    private final String secret = "verySecretKeyExample12345"; // секрет для подписи
+    private final long accessTokenValidity = 1000 * 60 * 15; // 15 минут
+    private final long refreshTokenValidity = 1000 * 60 * 60 * 24 * 7; // 7 дней
 
-    private int lifetime =  24 * 60 * 60 * 1000;
-
-    //Create Jwt token не лезь в конструкцию создания
-    public String generatedToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return Jwts.builder().setSubject((userDetails.getUsername())).setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + lifetime))
+    public String generateAccessToken(UserDetails userDetails) {
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidity))
+                .signWith(SignatureAlgorithm.HS256, secret)
+                .compact();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     //Получение имени из Jwt token

@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import './Forms.css'
+import { Navigate, NavLink, useNavigate } from 'react-router-dom';
 function Registration(){
 
     
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+
+    const navigate = useNavigate();
 
     const handleChangeName = (event) => {
         setName(event.target.value)
@@ -20,9 +23,7 @@ function Registration(){
     const handleChangePassword = (event) => {
         setPassword(event.target.value)
         
-    }
-
-    
+    } 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,11 +39,11 @@ function Registration(){
             email:email,
             password:password
         }),
-        mode: 'cors'
+        // mode: 'cors'
       });
 
       if (response.ok) {
-        alert('Данные успешно отправлены!');
+        navigate('/login')
       } else {
         alert('Ошибка при отправке данных');
       }
@@ -53,7 +54,7 @@ function Registration(){
 
     return(
         <div className="forms_block">
-            <form className="forms_register">
+            <form className="forms_register" onSubmit={handleSubmit}>
                 <div className="main_form_text">Регистрация</div>
                 <div className="form_block">
                     <label className="form_label">Имя</label>
@@ -61,14 +62,14 @@ function Registration(){
                 </div>
                 <div className="form_block">
                     <label className="form_label">Почта</label>
-                    <input className="form_input" value={email} onChange={handleChangeEmail}/>
+                    <input className="form_input" value={email} type="email" onChange={handleChangeEmail}/>
                 </div>
                 <div className="form_block">
                     <label className="form_label">Пароль</label>
                     <input className="form_input" value={password} onChange={handleChangePassword}/>
                 </div> 
-                <button className="form_btn" onClick={handleSubmit}>Создать</button>
-                <button className="little_form_text">Войти</button>
+                <button className="form_btn" type='submit'>Создать</button>
+                <div className="little_form_text"><NavLink to = "/login">Войти</NavLink></div>
             </form>
         </div>
     )

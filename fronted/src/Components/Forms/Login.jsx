@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { NavLink, useNavigate} from 'react-router-dom';
 import './Forms.css'
 function Login(){
     const [name, setName] = useState('')
     const [password, setPassword] = useState('')
+    const navigate = useNavigate()
 
     const handleChangeName = (event) => {
         setName(event.target.value)
@@ -21,6 +23,7 @@ function Login(){
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({
            username: name, 
             password: password
@@ -31,12 +34,10 @@ function Login(){
       if(response.ok){
             const token = await response.text()
             localStorage.setItem("token", token)
-            console.log(token)
-            alert("NICE")
+            navigate('/chats', { replace: true })
         }
         else{
-            alert( name)
-            alert(password)
+            alert("Eror")
         }
     } catch (error) {
       console.error('Ошибка:', error);
@@ -54,8 +55,8 @@ function Login(){
                     <label className="form_label" >Пароль</label>
                     <input className="form_input" value={password} onChange={handleChangePassword}/>
                 </div> 
-                <button className="form_btn" onClick={handleSubmit}>Войти</button>
-                <div className="little_form_text">Зарегестрироваться</div>
+                <button className="form_btn" onClick={handleSubmit} >Войти</button>
+                <div className="little_form_text"><NavLink to="/">Зарегестрироваться</NavLink></div>
             </form>
         </div>
     )
