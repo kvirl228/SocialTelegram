@@ -3,7 +3,7 @@ package org.example.sutod_auth.Configuration;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.sutod_auth.Jwt.TokenFilter;
-import org.example.sutod_auth.Servies.UserService;
+import org.example.sutod_auth.Servies.Impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,7 +53,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:3000"); // ваш React URL
+        config.addAllowedOrigin("http://localhost:3000"); // React URL
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);
@@ -80,9 +80,9 @@ public class SecurityConfiguration {
                 )
 
                 .authorizeHttpRequests(authorize -> authorize
-                        //Если не зареган
+
                         .requestMatchers("/auth/**").permitAll()
-                        //Если зареган направка на нужный эндпоинт
+
                         .requestMatchers("/api/**").fullyAuthenticated()
                         .anyRequest().permitAll()
                 )

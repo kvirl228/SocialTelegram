@@ -11,7 +11,7 @@
     align-items: center;
     flex-direction: column;
     width: 615px;
-    height: 500px;
+    height: 550px;
     border: 2px solid #D61C4E;
     background-color: #34394E;
     border-radius: 25px;
@@ -49,6 +49,7 @@
     font-size: 20px;
     border-radius: 10px;
     background-color: rgba(58, 63, 87, 1);
+    margin-top: 10px;
 }
 .form_btn{
     width: 200px;
@@ -66,6 +67,23 @@
     font-size: 20px;
 }
 
+.settings_exit{
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    font-size: 30px;
+    color: white;
+}
+
+.forms_block_settings{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #3A3F57;
+}
 @media (max-width: 600px) {
     .forms{
         height: 900px;

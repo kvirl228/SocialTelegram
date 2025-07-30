@@ -26,7 +26,7 @@ public class TokenFilter extends OncePerRequestFilter {
         String jwt = null;
         String username = null;
         UserDetails userDetails = null;
-        UsernamePasswordAuthenticationToken auth= null;
+        UsernamePasswordAuthenticationToken auth = null;
 
         //Проверка на регистрацию и Jwt token
         try {

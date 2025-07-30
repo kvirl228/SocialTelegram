@@ -2,23 +2,40 @@ import { useEffect, useState } from 'react';
 import './Chat.css'
 import ChatInfo from './Chat_info';
 import { useNavigate } from 'react-router-dom';
+import Chat from './Chat';
+import Settings from '../Forms/Settings';
 
 function Chats(){
 
     const navigate = useNavigate()
 
-    const[search, setSearch] = useState('')
     const[searchCheck, setSearchCheck] = useState(true)
-    // const[chooseCaht, setChooseChat] = useState(-1)
-    const[userInfo, setUserInfo] = useState([{username:'', Id:-1}])
+    const[isClick, setIsClick] = useState(true)
+    const[isOpenSettings, setIsOpenSettings] = useState(true)
+
+    const[userid, setuserId] = useState(-1)
+    const[chooseCaht, setChooseChat] = useState(-1)
+
+    const[search, setSearch] = useState('')
+    
+    const[userInfo, setUserInfo] = useState([{username:'', id:-1}])
     const[userChats, setUserChats] = useState([])
+
 
     const handleChange = (e) => {
       setSearch(e.target.value)
       if(e.target.value.trim() == ''){
-                setSearchCheck(true)
-
+          setSearchCheck(true)
       }
+    }
+
+    const clickChat = (value, chatId) => {
+      setIsClick(!value)
+      setChooseChat(chatId)
+    }
+
+    const openSettings = (value) => {
+      setIsOpenSettings(!value)
     }
 
     async function refersh() {
@@ -57,7 +74,7 @@ function Chats(){
         const data = await response.json();
         console.log(data)
         await setUserInfo([ data])
-        console.log(userInfo[0].Id)
+        console.log(userInfo[0].id)
         // await setChooseChat(userInfo[0].Id)
         setSearchCheck(false)
       } 
@@ -90,8 +107,7 @@ function Chats(){
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data)
-        return await data
+        await setuserId(data)
       } 
       else if (response.status == 401) {
         await refersh()
@@ -100,7 +116,6 @@ function Chats(){
       else {
         alert('Ошибка при отправке данных');
         setSearchCheck(true)
-        alert("sadasd")
         console.log(response.status)
       } 
       } catch (error) {
@@ -136,23 +151,27 @@ function Chats(){
       }
     } 
 
-    const [chooseChat, setchooseChat] = useState(0);
-    function clickHandler(id){
-        setchooseChat(id)
-    }
+    // useEffect(() => {
+    //   getAllChats();
+    // }, []);    
 
     useEffect(() => {
-      getAllChats();
-    }, []);    
+      getId()
+      getAllChats()
+    }, [])
 
     return(
-        <div className='chats_block'>
+      <>
+      {isOpenSettings ? 
+          <div className='chats_block'>
             <div className="folder_block">
                 <div className="user_block">
-                    <div className="user_folder_photo"></div>
+                    <div className="user_folder_photo" onClick={() => openSettings(isOpenSettings)}></div>
                     <input className="user_folder_search" placeholder='Поиск' value={search} onChange={handleChange}/>
                     <button onClick={searchUser}>src</button>
                 </div>
+
+                
                 <div className="folder">
                     {searchCheck ? 
                       userChats.map(item => 
@@ -161,7 +180,7 @@ function Chats(){
                             // text = {item.text}
                             // time={item.time}
                             // img={item.img}
-                            func={() => clickHandler(item.chatId)}
+                            func={() => clickChat(isClick, item.id)}
                         />
                       )
                       : 
@@ -171,16 +190,46 @@ function Chats(){
                             text = {""}
                             time={""}
                             img={""}
-                            func={() => clickHandler(userInfo[0].Id)}
+                            func={() => clickChat(isClick, userInfo[0].id)}
                           /> 
                       </div>
                     }
                 </div>
             </div>
             <div className='chat_block'>
-                
+              {
+                isClick ? 
+                <div></div>
+                :
+                searchCheck ? 
+                      userChats.map(item => 
+                        <Chat
+                            user1 = {userid}
+                            uer2 = {item.id}
+                            username = {item.username}
+                        />
+                      )
+                      : 
+                      <div>
+                        <Chat
+                            user1 = {userid}
+                            uer2 = {userInfo[0].id}
+                            username = {userInfo[0].username}
+                          /> 
+                      </div>
+              }
             </div>
-        </div>
+          </div>
+          :
+          <div className='change_info_form'>
+              <Settings
+                exit = {() => openSettings(isOpenSettings)} 
+                userId = {userid}
+              />
+          </div>
+      }
+        
+      </>
     )
     
 }

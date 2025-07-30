@@ -5,11 +5,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.example.sutod_auth.Entities.User;
-import org.example.sutod_auth.Entities.UserResponse.UserRequest;
-import org.example.sutod_auth.Entities.UserResponse.UserRequestSignIn;
+import org.example.sutod_auth.Entities.UserDTO.UserRequestSignUp;
+import org.example.sutod_auth.Entities.UserDTO.UserRequestSignIn;
 import org.example.sutod_auth.Jwt.JwtCore;
 import org.example.sutod_auth.Repositories.UserRepository;
-import org.example.sutod_auth.Servies.UserService;
+import org.example.sutod_auth.Servies.Impl.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,26 +38,26 @@ public class SecurityController {
 
     //регистрация
     @PostMapping("/signup")
-    ResponseEntity<?> signup(@RequestBody UserRequest userRequest){
+    ResponseEntity<?> signup(@RequestBody UserRequestSignUp userRequestSignUp){
         String pat = "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9!?]).{8,}";
         //проверка наличия такого имени в бд
-        if(userRepository.findByUsername(userRequest.getUsername()).isPresent()){
+        if(userRepository.findByUsername(userRequestSignUp.getUsername()).isPresent()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is already in use");
         }
         //проверка наличия такого имени в email
-        if (userRepository.findByEmail(userRequest.getEmail()).isPresent()){
+        if (userRepository.findByEmail(userRequestSignUp.getEmail()).isPresent()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is already in use");
         }
 
-        if (userRequest.getPassword().length() < 8 || userRequest.getUsername().length() < 3 || !userRequest.getPassword().matches(pat)){
+        if (userRequestSignUp.getPassword().length() < 8 || userRequestSignUp.getUsername().length() < 3 || !userRequestSignUp.getPassword().matches(pat)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad password or name");
         }
 
         //Создание юзера
         User user = new User();
-        user.setEmail(userRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-        user.setUsername(userRequest.getUsername());
+        user.setEmail(userRequestSignUp.getEmail());
+        user.setPassword(passwordEncoder.encode(userRequestSignUp.getPassword()));
+        user.setUsername(userRequestSignUp.getUsername());
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
